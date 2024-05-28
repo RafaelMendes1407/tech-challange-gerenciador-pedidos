@@ -1,4 +1,4 @@
-FROM openjdk:23-jdk-slim-bookworm
+FROM openjdk:21-slim-bookworm
 
 # Set the working directory in the container
 WORKDIR /app
@@ -16,10 +16,10 @@ COPY src/ ./src
 
 # Download and install Gradle (version 7)
 RUN ./gradlew --version
-RUN ./gradlew --no-daemon wrapper --gradle-version 7.0
+RUN ./gradlew --no-daemon wrapper --gradle-version 8.7
 
 # Build the Spring Boot application
 RUN ./gradlew --no-daemon build
 
 # Set the entry point for the container
-ENTRYPOINT ["java", "-jar", "build/libs/gerenciador-pedidos-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "build/libs/order-manager-0.0.1-SNAPSHOT.jar"]
