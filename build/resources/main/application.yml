@@ -16,7 +16,7 @@ spring:
       schema-locations: classpath:init-schema.sql
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
       show-sql: true
       format_sql: true
       database: postgresql

@@ -1,70 +1,63 @@
 package com.techchallenge.ordermanager.configuration;
 
-import com.techchallenge.ordermanager.adapters.presenter.customer.CustomerRegistrationPresenter;
-import com.techchallenge.ordermanager.adapters.presenter.order.ListOrderPresenter;
-import com.techchallenge.ordermanager.adapters.presenter.order.OrderPresenter;
-import com.techchallenge.ordermanager.adapters.presenter.product.ListProductPresenter;
-import com.techchallenge.ordermanager.adapters.presenter.product.ProductPresenter;
-import com.techchallenge.ordermanager.adapters.usecase.customer.CustomerRegistrationUseCase;
-import com.techchallenge.ordermanager.adapters.usecase.order.CheckoutOrderUsecase;
-import com.techchallenge.ordermanager.adapters.usecase.order.ListOrdersUseCase;
-import com.techchallenge.ordermanager.adapters.usecase.product.*;
-import com.techchallenge.ordermanager.adapters.web.in.controller.customer.CustomerInput;
-import com.techchallenge.ordermanager.adapters.web.in.controller.product.ProductInput;
-import com.techchallenge.ordermanager.core.ports.database.Database;
-import com.techchallenge.ordermanager.core.usecase.customer.CustomerRegistration;
-import com.techchallenge.ordermanager.core.usecase.order.CheckoutOrder;
-import com.techchallenge.ordermanager.core.usecase.order.ListOrders;
-import com.techchallenge.ordermanager.core.usecase.product.*;
+import com.techchallenge.ordermanager.application.gateways.Database;
+import com.techchallenge.ordermanager.application.usecase.customer.CustomerRegistration;
+import com.techchallenge.ordermanager.application.usecase.order.CheckoutOrder;
+import com.techchallenge.ordermanager.application.usecase.order.ListOrders;
+import com.techchallenge.ordermanager.application.usecase.product.*;
+import com.techchallenge.ordermanager.infrastructure.controllers.customer.CustomerRegistrationPresenter;
+import com.techchallenge.ordermanager.infrastructure.controllers.order.CheckoutOrderPresenter;
+import com.techchallenge.ordermanager.infrastructure.controllers.order.GetListOrderPresenter;
+import com.techchallenge.ordermanager.infrastructure.controllers.product.CreateProductPresenter;
+import com.techchallenge.ordermanager.infrastructure.controllers.product.FindProductByCategoryPresenter;
+import com.techchallenge.ordermanager.infrastructure.controllers.product.GetProductByIdPresenter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.UUID;
 
 @Configuration
 public class UseCaseConfiguration {
 
     // Customer
     @Bean
-    public CustomerRegistration<CustomerInput> customerRegistration(Database database, CustomerRegistrationPresenter presenter) {
-        return new CustomerRegistrationUseCase(presenter, database.customerGateway());
+    public CustomerRegistration customerRegistration(Database database, CustomerRegistrationPresenter presenter) {
+        return new CustomerRegistration(database.customerGateway(), presenter);
     }
 
 
     // Product
     @Bean
-    public AddProduct<ProductInput> productInput(Database database, ProductPresenter presenter) {
-        return new AddProductUseCase(presenter, database.productGateway());
+    public AddProduct productInput(Database database, CreateProductPresenter presenter) {
+        return new AddProduct(presenter, database.productGateway());
     }
 
     @Bean
-    public DeleteProduct<UUID> deleteProduct(Database database) {
-        return new DeleteProductUseCase(database.productGateway());
+    public DeleteProduct deleteProduct(Database database) {
+        return new DeleteProduct(database.productGateway());
     }
 
     @Bean
-    public EditProduct<ProductInput> editProduct(Database database) {
-        return new EditProductUseCase(database.productGateway());
+    public EditProduct editProduct(Database database) {
+        return new EditProduct(database.productGateway());
     }
 
     @Bean
-    public GetProduct<UUID> getProduct(Database database, ProductPresenter presenter) {
-        return new GetProductUseCase(presenter, database.productGateway());
+    public GetProduct getProduct(Database database, GetProductByIdPresenter presenter) {
+        return new GetProduct(presenter, database.productGateway());
     }
 
     @Bean
-    public FindProductByCategory<ProductInput> findProductByCategory(Database database, ListProductPresenter presenter) {
-        return new FindProductByCategoryUseCase(presenter, database.productGateway());
+    public FindProductByCategory findProductByCategory(Database database, FindProductByCategoryPresenter presenter) {
+        return new FindProductByCategory(presenter, database.productGateway());
     }
 
     // Order
     @Bean
-    public ListOrders listOrders(Database database, ListOrderPresenter presenter) {
-        return new ListOrdersUseCase(presenter, database.orderGateway());
+    public ListOrders listOrders(Database database, GetListOrderPresenter presenter) {
+        return new ListOrders(database.orderGateway(), presenter);
     }
 
     @Bean
-    public CheckoutOrder checkoutOrder(Database database,  OrderPresenter presenter) {
-        return new CheckoutOrderUsecase(presenter, database.orderGateway(), database.productGateway());
+    public CheckoutOrder checkoutOrder(Database database,  CheckoutOrderPresenter presenter) {
+        return new CheckoutOrder(database.orderGateway(), database.productGateway(), presenter);
     }
 }
